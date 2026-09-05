@@ -1,0 +1,63 @@
+services:
+  mongodb:
+    image: ama1348/mongodb:v1
+    container_name: mongodb
+  redis:
+    image: redis:7.0
+    container_name: redis
+  rabbitmq:
+    image: rabbitmq:3
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=roboshop
+      - RABBITMQ_DEFAULT_PASS=roboshop123
+  mysql:
+    image: amar1348/mysql:v1
+    container_name: mysql
+  catalogue:
+    image: amar1348/catalogue:v1
+    container_name: catalogue
+    depends_on:
+      - mongodb
+  user:
+    image: amar1348/user:v1
+    container_name: user
+    depends_on:
+      - redis
+      - mongodb
+  cart:
+    image: amar1348/cart:v1
+    container_name: cart
+    depends_on:
+     - redis
+     - catalogue
+  shipping:
+    image: amar1348/shipping:v1
+    container_name: shipping
+    depends_on:
+     - cart
+     - mysql
+  payment:
+    image: amar1348/payment:v1
+    container_name: payment
+    depends_on:
+     - user
+     - cart
+     - rabbitmq
+  frontend:
+    image: amar1348/frontend:v1
+    container_name: frontend
+    ports:
+    - "80:80"
+    depends_on:
+      - catalogue
+      - cart
+      - user
+      - shipping
+      - payment
+  networks:
+    default:
+      drive: bridge
+      name: roboshop
+      external: false 
+
