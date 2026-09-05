@@ -23,7 +23,7 @@ RUN addgroup -S roboshop && adduser -S roboshop -G roboshop
 # Copy installed packages from builder
 COPY --from=builder /install /usr/local
 # Copy app files
-COPY --chown=roboshop:roboshop payment.ini *.py requirements.txt .
+COPY --chown=roboshop:roboshop payment.ini *.py requirements.txt /opt/server/
 ENV CART_HOST="cart" \
     CART_PORT="8080" \
     USER_HOST="user" \
@@ -31,7 +31,6 @@ ENV CART_HOST="cart" \
     AMQP_HOST="rabbitmq" \
     AMQP_USER="roboshop" \
     AMQP_PASS="roboshop123"
-
 USER roboshop
 CMD ["uwsgi", "--ini", "payment.ini"]
 
